@@ -2,16 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-//Text Justification and Output Formatting
-void printLine(char* line, int lineLength, int maxLineLength) {
- 
-}
-
 int main(int argc, char* argv[]) {
-
-    //File I/O and Command Line Argument Parsing
-
     if(argc != 3) {
         printf("Usage: %s <lineLength> <filename>\n", argv[0]);
         return 1;
@@ -25,13 +16,14 @@ int main(int argc, char* argv[]) {
         perror("Error opening file");
         return 2;
     }
-
-    //Text Processing and Word Wrapping
-
-
-
-
+    
+    char line[1000]; // assuming a line won't be longer than 1000 characters
+    while(fgets(line, sizeof(line), file)) {
+        printf("%s", line); // print each line of the file
+    }
+    
+    printf("\n"); // Add a newline character at the end of the output
+    
     fclose(file);
     return 0;
 }
-
