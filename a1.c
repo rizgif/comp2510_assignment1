@@ -2,18 +2,40 @@
 #include <stdlib.h>
 #include <string.h>
 
-//Text Justification and Output Formatting
-
 void printLine(char* line, int lineLength, int maxLineLength) {
-
-      // Fill out implementation
-      
+    int spacesToAdd = maxLineLength - lineLength;
+    int spaceIndexes[20]; 
+    int spaceCount = 0;
+    
+    for(int i = 0; i < lineLength; i++) {
+        if(line[i] == ' ') {
+            spaceIndexes[spaceCount++] = i;
+        }
+    }
+    
+    if(spaceCount == 0) { 
+        int padding = (maxLineLength - lineLength) / 2;
+        for(int i = 0; i < padding; i++) {
+            printf(" ");
+        }
+        printf("%s\n", line);
+    } else { 
+        int extraSpaces = spacesToAdd % spaceCount;
+        int spacesPerGap = spacesToAdd / spaceCount;
+        
+        for(int i = 0; i < lineLength; i++) {
+            printf("%c", line[i]);
+            if(line[i] == ' ') {
+                for(int j = 0; j < spacesPerGap + (extraSpaces-- > 0 ? 1 : 0); j++) {
+                    printf(" ");
+                }
+            }
+        }
+        printf("\n");
+    }
 }
 
 int main(int argc, char* argv[]) {
-
-    //File I/O and Command Line Argument Parsing
-    
     if(argc != 3) {
         printf("Usage: %s <lineLength> <filename>\n", argv[0]);
         return 1;
@@ -28,21 +50,31 @@ int main(int argc, char* argv[]) {
         return 2;
     }
     
-    char line[1000]; 
+    char line[1024];
     while(fgets(line, sizeof(line), file)) {
-        printf("%s", line); // print each line of the file
+        line[strcspn(line, "\n")] = 0; 
+        
+        char tempLine[1024] = "";
+        int wordStart = 0;
+        int lineLength = strlen(line);
+        
+        for(int i = 0; i <= lineLength; i++) {
+            if(line[i] == ' ' || line[i] == '\0') {
+                int wordLength = i - wordStart;
+                
+                if(strlen(tempLine) + wordLength > maxLineLength) {
+                    printLine(tempLine, strlen(tempLine) - 1, maxLineLength); 
+                    strcpy(tempLine, "");
+                }
+                
+                strncat(tempLine, &line[wordStart], wordLength);
+                strcat(tempLine, " ");
+                
+                wordStart = i + 1; 
+            }
+        }
+        printLine(tempLine, strlen(tempLine) - 1, maxLineLength); 
     }
-    
-    printf("\n"); 
-
-    //Text Processing and Word Wrapping
-
-    while(fgets(line, sizeof(line), file)) {
-
-        // Fill out implementation
-
-    }
-
     
     fclose(file);
     return 0;
