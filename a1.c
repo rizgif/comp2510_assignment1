@@ -7,11 +7,13 @@ void printLine(char* line, int lineLength, int maxLineLength) {
     int spacesToAdd = maxLineLength - lineLength;  // Additional spaces needed for justification
     int spaceIndexes[20];  // Indexes of spaces within the line
     int spaceCount = 0;  // Counter for the number of spaces
-    
-    // Record the indexes of spaces within the line
-    for(int i = 0; i < lineLength; i++) {
-        if(line[i] == ' ') {
-            spaceIndexes[spaceCount++] = i;
+    int hyphenCount = 0; // Counter for the number of hyphens
+
+    for (int i = 0; i < lineLength; i++) {
+        if (line[i] == ' ') {
+            spaceCount++;
+        } else if (line[i] == '-') {
+            hyphenCount++;
         }
     }
     
@@ -23,16 +25,23 @@ void printLine(char* line, int lineLength, int maxLineLength) {
         }
         printf("%s\n", line);
     } else {
-        // Distribute additional spaces among existing spaces
-        int extraSpaces = spacesToAdd % spaceCount;
-        int spacesPerGap = spacesToAdd / spaceCount + 1;  // +1 for the original space
-        
-        for(int i = 0; i < lineLength; i++) {
+      // Line has spaces, handling extraSpaces
+        int wordStart = 0;
+        int extraSpaces = spacesToAdd % (spaceCount - hyphenCount);
+        int spacesPerGap = spacesToAdd / (spaceCount - hyphenCount);
+
+        for (int i = 0; i < lineLength; i++) {
             printf("%c", line[i]);
-            if(line[i] == ' ') {
-                for(int j = 0; j < spacesPerGap + (extraSpaces-- > 0 ? 1 : 0); j++) {
-                    printf(" ");
-                }
+            if (line[i] == ' ') {
+              for (int j = 0; j < spacesPerGap; j++) {
+                  printf(" ");
+              }
+              // Distribute remaining extra spaces if there are any
+              if (extraSpaces > 0) {
+                  printf(" ");
+                  extraSpaces--;
+              }
+              wordStart = i + 1;
             }
         }
         printf("\n");
