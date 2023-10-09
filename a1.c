@@ -50,31 +50,44 @@ int main(int argc, char* argv[]) {
         return 2;
     }
     
-    char line[1024];
+     char line[1024];
     while(fgets(line, sizeof(line), file)) {
-        line[strcspn(line, "\n")] = 0; 
-        
-        char tempLine[1024] = "";
-        int wordStart = 0;
-        int lineLength = strlen(line);
-        
-        for(int i = 0; i <= lineLength; i++) {
-            if(line[i] == ' ' || line[i] == '\0') {
-                int wordLength = i - wordStart;
-                
-                if(strlen(tempLine) + wordLength > maxLineLength) {
-                    printLine(tempLine, strlen(tempLine) - 1, maxLineLength); 
-                    strcpy(tempLine, "");
-                }
-                
-                strncat(tempLine, &line[wordStart], wordLength);
-                strcat(tempLine, " ");
-                
-                wordStart = i + 1; 
+    line[strcspn(line, "\n")] = 0;
+
+    // Validation pass to ensure no word exceeds maxLineLength
+    int wordStart = 0;
+    int lineLength = strlen(line);
+    for(int i = 0; i <= lineLength; i++) {
+        if(line[i] == ' ' || line[i] == '\0') {
+            int wordLength = i - wordStart;
+            if(wordLength > maxLineLength) {
+                printf("Error. The word processor can’t display the output.\n");
+                fclose(file);
+                return 3; // Return a unique error code
             }
+            wordStart = i + 1;
         }
-        printLine(tempLine, strlen(tempLine) - 1, maxLineLength); 
     }
+
+    char tempLine[1024] = "";
+    wordStart = 0;
+    for(int i = 0; i <= lineLength; i++) {
+        if(line[i] == ' ' || line[i] == '\0') {
+            int wordLength = i - wordStart;
+
+            if(strlen(tempLine) + wordLength > maxLineLength) {
+                printLine(tempLine, strlen(tempLine) - 1, maxLineLength); 
+                strcpy(tempLine, "");
+            }
+
+            strncat(tempLine, &line[wordStart], wordLength);
+            strcat(tempLine, " ");
+            wordStart = i + 1; 
+        }
+    }
+    printLine(tempLine, strlen(tempLine) - 1, maxLineLength); 
+}
+
     
     fclose(file);
     return 0;
