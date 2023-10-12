@@ -63,8 +63,7 @@ void printLine(char *line, int lineLength, int maxLineLength)
     }
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     // Validate number of command-line arguments
     if (argc != 3)
     {
@@ -143,3 +142,4 @@ int main(int argc, char *argv[])
         fclose(file); // Close the file after reading
         return 0;
     }
+}
