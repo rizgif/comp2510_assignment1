@@ -18,22 +18,30 @@ void printLine(char *line, int lineLength, int maxLineLength)
         }
     }
 
-    // If the line has no spaces, center it
-    if (spaceCount == 0)
-    {
-        int padding = (maxLineLength - lineLength) / 2; // Calculate how much padding is needed
+if (spaceCount == 0)
+{
+    int totalPadding = maxLineLength - lineLength; // Calculate the total padding needed
+    int paddingBefore = totalPadding / 2; // Padding before and after the line
 
-        // Padding for centering a word
-        if ((maxLineLength - lineLength) % 2 != 0)
-        {
-            padding++;
-        }
-        for (int i = 0; i < padding; i++)
-        {
-            printf(" ");
-        }
-        printf("%s\n", line);
+    // If totalPadding is odd, distribute the extra space to paddingBefore
+    if (totalPadding % 2 != 0)
+    {
+        paddingBefore++;
     }
+    int paddingAfter = totalPadding - paddingBefore - 1; 
+    for (int i = 0; i < paddingBefore; i++)
+    {
+        printf(" ");
+    }
+    printf("%s", line);
+    for (int i = 0; i < paddingAfter; i++)
+    {
+        printf(" ");
+    }
+    printf("adsfasdf");
+}
+
+
     else
     {
         // Line has spaces, handling extraSpaces
