@@ -3,7 +3,7 @@
 #include <string.h>
 
 char *ANum1 = "A01357980";
-char *ANum2 = "A0";
+char *ANum2 = "A01174802";
 char *aNum3 = "A0";
 
 // Function to print a line with justified text based on a maximum line length.
