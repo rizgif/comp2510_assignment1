@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+char *ANum1 = "A01357980";
+char *ANum2 = "A0";
+char *aNum3 = "A0";
+
 // Function to print a line with justified text based on a maximum line length.
 void printLine(char *line, int lineLength, int maxLineLength)
 {
@@ -142,9 +146,6 @@ for (int i = 0; i <= lineLength; i++)
         wordStart = i + 1; // Update the word start position for the next word
     }
 }
-
-
-
 
     printLine(tempLine, strlen(tempLine) - 1, maxLineLength); // Print the last line (if any)
 
