@@ -38,7 +38,7 @@ if (spaceCount == 0)
     {
         printf(" ");
     }
-    printf("adsfasdf");
+    printf("\n");
 }
 
 
