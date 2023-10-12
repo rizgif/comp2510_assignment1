@@ -84,22 +84,23 @@ int main(int argc, char *argv[]) {
         char *token = getNextToken(&cursor);
 
         while (token) {
-            int prospectiveLength = strlen(tempLine) + strlen(token) + 1;
             char *hyphenPos = strchr(token, '-');
-            
-            if (hyphenPos && prospectiveLength <= maxLineLength) {
+            if (hyphenPos) {
                 *hyphenPos = '\0';
                 char *firstPart = token;
                 char *secondPart = hyphenPos + 1;
                 strcat(tempLine, firstPart);
                 strcat(tempLine, "- ");
-            } else if (prospectiveLength <= maxLineLength) {
-                strcat(tempLine, token);
+                printLine(tempLine, maxLineLength);
+                strcpy(tempLine, secondPart);
                 strcat(tempLine, " ");
             } else {
-                tempLine[strlen(tempLine) - 1] = '\0';  // Remove trailing space
-                printLine(tempLine, maxLineLength);
-                strcpy(tempLine, "");
+                int prospectiveLength = strlen(tempLine) + strlen(token) + 1;
+                if (prospectiveLength > maxLineLength) {
+                    tempLine[strlen(tempLine) - 1] = '\0';  // Remove trailing space
+                    printLine(tempLine, maxLineLength);
+                    strcpy(tempLine, "");
+                }
                 strcat(tempLine, token);
                 strcat(tempLine, " ");
             }
