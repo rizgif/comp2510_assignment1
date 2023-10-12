@@ -2,116 +2,159 @@
 #include <stdlib.h>
 #include <string.h>
 
-char* getNextToken(char **str) {
-    while (**str == ' ') {
-        (*str)++;
+// Function to print a line with justified text based on a maximum line length.
+void printLine(char *line, int lineLength, int maxLineLength)
+{
+  int spacesToAdd = maxLineLength - lineLength; // Additional spaces needed for justification
+  int spaceCount = 0;                           // Counter for the number of spaces
+
+  // Increments the number of spaces
+  for (int i = 0; i < lineLength; i++)
+  {
+    if (line[i] == ' ')
+    {
+      spaceCount++;
     }
+  }
 
-    if (**str == '\0') {
-        return NULL;
+  if (spaceCount == 0)
+  {
+    int totalPadding = maxLineLength - lineLength; // Calculate the total padding needed
+    int paddingBefore = totalPadding / 2;          // Padding before and after the line
+
+    // If totalPadding is odd, distribute the extra space to paddingBefore
+    if (totalPadding % 2 != 0)
+    {
+      paddingBefore++;
     }
-
-    char *start = *str;
-
-    while (**str != '\0' && **str != ' ') {
-        (*str)++;
+    int paddingAfter = totalPadding - paddingBefore - 1;
+    for (int i = 0; i < paddingBefore; i++)
+    {
+      printf(" ");
     }
-
-    char *token = (char*)malloc((*str - start + 1) * sizeof(char));
-    strncpy(token, start, *str - start);
-    token[*str - start] = '\0';
-    if (**str != '\0') {
-        (*str)++;
+    printf("%s", line);
+    for (int i = 0; i < paddingAfter; i++)
+    {
+      printf(" ");
     }
+    printf("\n");
+  }
 
-    return token;
-}
-
-void printLine(char *line, int maxLineLength) {
-    int lineLength = strlen(line);
-    if (line[lineLength - 1] == ' ') {
-        line[lineLength - 1] = '\0';
-        lineLength--;
-    }
-
-    if (strchr(line, ' ') == NULL) {
-        int padding = (maxLineLength - lineLength) / 2;
-        int extraSpace = (maxLineLength - lineLength) % 2;
-        for (int i = 0; i < padding + extraSpace; i++) printf(" ");
-        printf("%s\n", line);
-        return;
-    }
-
-    int spacesToAdd = maxLineLength - lineLength;
-    int spaceCount = 0;
-    for (int i = 0; i < lineLength; i++) {
-        if (line[i] == ' ') spaceCount++;
-    }
+  else
+  {
+    // Line has spaces, handling extraSpaces
     int extraSpaces = spacesToAdd % spaceCount;
     int spacesPerGap = spacesToAdd / spaceCount;
 
-    for (int i = 0; i < lineLength; i++) {
-        printf("%c", line[i]);
-        if (line[i] == ' ') {
-            for (int j = 0; j < spacesPerGap; j++) printf(" ");
-            if (extraSpaces > 0) {
-                printf(" ");
-                extraSpaces--;
-            }
+    for (int i = 0; i < lineLength; i++)
+    {
+      printf("%c", line[i]);
+      if (line[i] == ' ')
+      {
+        for (int j = 0; j < spacesPerGap; j++)
+        {
+          printf(" ");
         }
+        // Distribute remaining extra spaces if there are any
+        if (extraSpaces > 0)
+        {
+          printf(" ");
+          extraSpaces--;
+        }
+      }
     }
     printf("\n");
+  }
 }
 
-int main(int argc, char *argv[]) {
-    if (argc != 3) {
-        printf("Usage: %s <lineLength> <filename>\n", argv[0]);
-        return 1;
+int main(int argc, char *argv[])
+{
+  // Validate number of command-line arguments
+  if (argc != 3)
+  {
+    printf("Usage: %s <lineLength> <filename>\n", argv[0]);
+    return 1;
+  }
+
+  int maxLineLength = atoi(argv[1]); // Maximum allowed line length
+  char *filename = argv[2];
+
+  FILE *file = fopen(filename, "r"); // Open the file for reading
+  if (!file)
+  {
+    perror("Error opening file");
+    return 2;
+  }
+
+  char line[1024];
+  while (fgets(line, sizeof(line), file))
+  {
+    line[strcspn(line, "\n")] = 0; // Remove newline character from the line
+
+    // Validation: Ensure no word in the line exceeds maxLineLength
+    int wordStart = 0;
+    int lineLength = strlen(line);
+    for (int i = 0; i <= lineLength; i++)
+    {
+      if (line[i] == ' ' || line[i] == '\0')
+      {
+        int wordLength = i - wordStart;
+        if (wordLength > maxLineLength)
+        {
+          printf("Error. The word processor can’t display the output.\n");
+          fclose(file);
+          return 3; // Return a unique error code
+        }
+        wordStart = i + 1;
+      }
     }
 
-    int maxLineLength = atoi(argv[1]);
-    FILE *file = fopen(argv[2], "r");
-    if (!file) {
-        perror("Error opening file");
-        return 2;
-    }
+    // Construct justified lines from the input line
+    char tempLine[1024] = ""; // Initialize a temporary line to store formatted text
+    wordStart = 0;            // Initialize the word start position
 
-    char line[1024];
-    while (fgets(line, sizeof(line), file)) {
-        line[strcspn(line, "\n")] = 0;
-        char tempLine[1024] = "";
-        char *cursor = line;
-        char *token = getNextToken(&cursor);
+// Loop through the characters in the input line
+for (int i = 0; i <= lineLength; i++)
+{
+    if (line[i] == ' ' || line[i] == '\0' || line[i] == '-')
+    {
+        // Calculate the length of the current word
+        int wordLength = i - wordStart;
 
-        while (token) {
-            char *hyphenPos = strchr(token, '-');
-            if (hyphenPos) {
-                *hyphenPos = '\0';
-                char *firstPart = token;
-                char *secondPart = hyphenPos + 1;
-                strcat(tempLine, firstPart);
-                strcat(tempLine, "- ");
-                printLine(tempLine, maxLineLength);
-                strcpy(tempLine, secondPart);
-                strcat(tempLine, " ");
-            } else {
-                int prospectiveLength = strlen(tempLine) + strlen(token) + 1;
-                if (prospectiveLength > maxLineLength) {
-                    tempLine[strlen(tempLine) - 1] = '\0';  // Remove trailing space
-                    printLine(tempLine, maxLineLength);
-                    strcpy(tempLine, "");
-                }
-                strcat(tempLine, token);
-                strcat(tempLine, " ");
-            }
-            token = getNextToken(&cursor);
+        // If adding the current word to tempLine exceeds the maximum line length, print tempLine
+        if (strlen(tempLine) + wordLength > maxLineLength)
+        {
+            printLine(tempLine, strlen(tempLine) - 1, maxLineLength); // Print the current formatted line
+            strcpy(tempLine, "");                                     // Clear the tempLine for the next line
         }
 
-        if (strlen(tempLine) > 0) {
-            printLine(tempLine, maxLineLength);
+        // Append the current word to tempLine
+        strncat(tempLine, &line[wordStart], wordLength); // Copy the word from input to tempLine
+        if (line[i] == '-' && line[i+1] != ' ')
+        {
+            strcat(tempLine, "- "); // Split the compound word into two words with the hyphen
+        } 
+        else
+        {
+            strcat(tempLine, " "); // Add a space to separate words
         }
+        wordStart = i + 1; // Update the word start position for the next word
     }
+}
 
-    fclose(file);
+    printLine(tempLine, strlen(tempLine) - 1, maxLineLength); // Print the last line (if any)
+    char *ANum = "A01174802_A00874466_A01357980"; // A numbers of everyone. AXXXX_AXXXX_AXXX format.
+
+        FILE *outputFile = fopen(ANum, "w");
+
+        if (outputFile == NULL)
+        {
+            printf("Failed to create the output file.\n");
+            return 1;
+        }
+
+    fclose(outputFile);
+    fclose(file); // Close the file after reading
     return 0;
+  }
 }
