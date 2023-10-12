@@ -84,23 +84,22 @@ int main(int argc, char *argv[]) {
         char *token = getNextToken(&cursor);
 
         while (token) {
+            int prospectiveLength = strlen(tempLine) + strlen(token) + 1;
             char *hyphenPos = strchr(token, '-');
-            if (hyphenPos) {
+            
+            if (hyphenPos && prospectiveLength <= maxLineLength) {
                 *hyphenPos = '\0';
                 char *firstPart = token;
                 char *secondPart = hyphenPos + 1;
                 strcat(tempLine, firstPart);
                 strcat(tempLine, "- ");
-                printLine(tempLine, maxLineLength);
-                strcpy(tempLine, secondPart);
+            } else if (prospectiveLength <= maxLineLength) {
+                strcat(tempLine, token);
                 strcat(tempLine, " ");
             } else {
-                int prospectiveLength = strlen(tempLine) + strlen(token) + 1;
-                if (prospectiveLength > maxLineLength) {
-                    tempLine[strlen(tempLine) - 1] = '\0';  // Remove trailing space
-                    printLine(tempLine, maxLineLength);
-                    strcpy(tempLine, "");
-                }
+                tempLine[strlen(tempLine) - 1] = '\0';  // Remove trailing space
+                printLine(tempLine, maxLineLength);
+                strcpy(tempLine, "");
                 strcat(tempLine, token);
                 strcat(tempLine, " ");
             }
@@ -111,17 +110,7 @@ int main(int argc, char *argv[]) {
             printLine(tempLine, maxLineLength);
         }
     }
-    char *ANum = "A01174802_A00874466_A01357980"; // A numbers of everyone. AXXXX_AXXXX_AXXX format.
 
-        FILE *outputFile = fopen(ANum, "w");
-
-        if (outputFile == NULL)
-        {
-            printf("Failed to create the output file.\n");
-            return 1;
-        }
-
-    fclose(outputFile);
     fclose(file);
     return 0;
 }
