@@ -10,7 +10,6 @@ char *aNum3 = "A0";
 void printLine(char *line, int lineLength, int maxLineLength)
 {
   int spacesToAdd = maxLineLength - lineLength; // Additional spaces needed for justification
-  int spaceIndexes[20];                         // Indexes of spaces within the line
   int spaceCount = 0;                           // Counter for the number of spaces
 
   // Increments the number of spaces
